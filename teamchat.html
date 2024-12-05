@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Chat</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Sidebar: Contact List -->
+        <aside class="sidebarteam">
+            <div class="user-header">
+                <h2>Team Chat</h2>
+            </div>
+            <ul class="contact-list" id="contact-list">
+                <li data-user="John" class="active">
+                    <img src="https://via.placeholder.com/50" alt="John">
+                    <span>John</span>
+                </li>
+                <li data-user="Jane">
+                    <img src="https://via.placeholder.com/50" alt="Jane">
+                    <span>Jane</span>
+                </li>
+                <li data-user="Mike">
+                    <img src="https://via.placeholder.com/50" alt="Mike">
+                    <span>Mike</span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Chat Window -->
+        <main class="chat-window">
+            <header class="chat-header" id="chat-header">
+                Chat with John
+            </header>
+            <div class="messages" id="messages">
+                <!-- Messages will be dynamically inserted here -->
+            </div>
+            <div class="message-input">
+                <input type="text" id="message-text" placeholder="Type a message..." />
+                <button id="send-message">Send</button>
+                <button id="attach-media">+</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

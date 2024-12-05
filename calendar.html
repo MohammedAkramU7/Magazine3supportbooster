@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Calendar with Notes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Left Calendar Section */
+        .calendar-container {
+            width: 40%;
+            padding: 20px;
+            background: #eef2f7;
+            border-right: 1px solid #d1d9e6;
+        }
+
+        .calendar-header {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .calendar-days,
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-days div {
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+        }
+
+        .day {
+            height: 80px;
+            background-color: #fff;
+            border: 1px solid #d1d9e6;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .day:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .day.selected {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .day.has-note {
+            background-color: red;
+            color: white;
+        }
+
+        /* Right Notes Section */
+        .notes-section {
+            width: 60%;
+            padding: 20px;
+        }
+
+        .notes-section textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 1px solid #d1d9e6;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: none;
+            margin-bottom: 10px;
+        }
+
+        .notes-section button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .notes-section button:hover {
+            background-color: #0056b3;
+        }
+
+        .notes-list {
+            margin-top: 20px;
+            background: #f7f9fc;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .notes-list h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+
+        .note-item {
+            background: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border: 1px solid #d1d9e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-note {
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .delete-note:hover {
+            color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Calendar Section -->
+        <div class="calendar-container">
+            <div class="calendar-header" id="calendar-header"></div>
+            <div class="calendar-days" id="calendar-days">
+                <!-- Days of the Week -->
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="notes-section">
+            <textarea id="note-input" placeholder="Write your notes here..."></textarea>
+            <button id="save-note">Save Note</button>
+
+            <div class="notes-list" id="notes-list">
+                <h3>Notes:</h3>
+                <div id="notes-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const calendarGrid = document.getElementById('calendar-grid');
+        const calendarHeader = document.getElementById('calendar-header');
+        const noteInput = document.getElementById('note-input');
+        const saveNoteButton = document.getElementById('save-note');
+        const notesContainer = document.getElementById('notes-container');
+        const notes = JSON.parse(localStorage.getItem('notes')) || {};
+
+        const today = new Date();
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+
+        calendarHeader.textContent = `${today.toLocaleString('default', { month: 'long' })} ${currentYear}`;
+
+        let selectedDate = `${currentYear}-${currentMonth + 1 < 10 ? '0' : ''}${currentMonth + 1}-01`;
+
+        // Render calendar days
+        function renderCalendar() {
+            calendarGrid.innerHTML = '';
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'day';
+                calendarGrid.appendChild(emptyCell);
+            }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const day = document.createElement('div');
+                const dateStr = `${currentYear}-${currentMonth + 1 < 10 ? '0' : ''}${currentMonth + 1}-${i < 10 ? '0' : ''}${i}`;
+                day.className = 'day';
+                day.textContent = i;
+                day.setAttribute('data-date', dateStr);
+
+                if (dateStr === selectedDate) day.classList.add('selected');
+                if (notes[dateStr]) day.classList.add('has-note');
+
+                day.addEventListener('click', () => {
+                    document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
+                    day.classList.add('selected');
+                    selectedDate = dateStr;
+                    renderNotes();
+                });
+
+                calendarGrid.appendChild(day);
+            }
+        }
+
+        // Render notes for the selected date
+        function renderNotes() {
+            notesContainer.innerHTML = '';
+            const dateNotes = notes[selectedDate] || [];
+            if (dateNotes.length === 0) {
+                notesContainer.innerHTML = '<p>No notes for this date.</p>';
+                return;
+            }
+
+            dateNotes.forEach((note, index) => {
+                const noteItem = document.createElement('div');
+                noteItem.className = 'note-item';
+                noteItem.innerHTML = `
+                    <span>${note}</span>
+                    <button class="delete-note" data-index="${index}">&times;</button>
+                `;
+
+                noteItem.querySelector('.delete-note').addEventListener('click', () => {
+                    deleteNote(index);
+                });
+
+                notesContainer.appendChild(noteItem);
+            });
+        }
+
+        // Delete note
+        function deleteNote(index) {
+            notes[selectedDate].splice(index, 1);
+            if (notes[selectedDate].length === 0) delete notes[selectedDate];
+            localStorage.setItem('notes', JSON.stringify(notes));
+            renderNotes();
+            renderCalendar();
+        }
+
+        // Save note
+        saveNoteButton.addEventListener('click', () => {
+            const noteText = noteInput.value.trim();
+            if (!noteText) {
+                alert('Please enter a note.');
+                return;
+            }
+
+            if (!notes[selectedDate]) notes[selectedDate] = [];
+            notes[selectedDate].push(noteText);
+
+            localStorage.setItem('notes', JSON.stringify(notes));
+            noteInput.value = '';
+            renderNotes();
+            renderCalendar();
+        });
+
+        renderCalendar();
+    </script>
+</body>
+</html>

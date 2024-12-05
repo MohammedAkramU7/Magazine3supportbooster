@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="tasks.js" defer></script>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <h2>Startup Platform</h2>
+            <ul class="menu">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="google-meet.html">Google Meet</a></li>
+                <li><a href="calendar.html">Calendar</a></li>
+                <li><a href="tasks.html" class="active">Tasks</a></li>
+                <li><a href="messages.html">Messages</a></li>
+                <li><a href="support.html">Support</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h1>Tasks</h1>
+            </header>
+            <section class="task-board">
+                <div class="task-column" data-status="todo">
+                    <h2>To Do</h2>
+                    <button class="btn-add-task">+ Add Task</button>
+                    <div class="task-list"></div>
+                </div>
+                <div class="task-column" data-status="in-progress">
+                    <h2>In Progress</h2>
+                    <div class="task-list"></div>
+                </div>
+                <div class="task-column" data-status="done">
+                    <h2>Done</h2>
+                    <div class="task-list"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

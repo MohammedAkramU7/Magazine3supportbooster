@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Meeting Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="meeting_google">Google Meeting Page</h1>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab-button" id="google-meeting-tab">Google Meeting</button>
+        </div>
+
+        <!-- Google Meeting Section (Initially Hidden) -->
+        <div id="google-meeting-section" style="display:none;">
+            <div id="google-signin-button"></div>
+
+            <div class="meeting_google" id="meeting-section" style="display:none;">
+                <h2>Create a New Meeting</h2>
+                <button class="button" id="start-instant-meeting">Start Instant Meeting</button>
+                <button class="button" id="schedule-meeting">Schedule a Meeting</button>
+                <button class="button" id="create-meeting">Create Meeting for Later</button>
+            </div>
+
+            <!-- Meeting Link Display -->
+            <div class="meeting_google" id="meeting-link" style="display:none;">
+                <h3>Your Meeting Link</h3>
+                <input type="text" id="meeting-url" readonly />
+                <button class="button" id="copy-link">Copy Link</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
